@@ -120,36 +120,36 @@ if options.correctJets :
 
     if not options.isData : 
         vPar = ROOT.vector(ROOT.JetCorrectorParameters)()
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_mcRun2_asymptotic_v4_L1FastJet_AK4PFchs.txt') )
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_mcRun2_asymptotic_v4_L2Relative_AK4PFchs.txt') )
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_mcRun2_asymptotic_v4_L3Absolute_AK4PFchs.txt') )
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_MC_L1FastJet_AK4PFchs.txt') )
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_MC_L2Relative_AK4PFchs.txt') )
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_MC_L3Absolute_AK4PFchs.txt') )
         jec = ROOT.FactorizedJetCorrector( vPar )
-        jecUnc = ROOT.JetCorrectionUncertainty( '74X_mcRun2_asymptotic_v4_Uncertainty_AK4PFchs.txt' )
+        jecUnc = ROOT.JetCorrectionUncertainty( 'Spring16_25nsV6_MC_Uncertainty_AK4PFchs.txt' )
 
         vParAK8 = ROOT.vector(ROOT.JetCorrectorParameters)()
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_mcRun2_asymptotic_v4_L1FastJet_AK8PFchs.txt') )
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_mcRun2_asymptotic_v4_L2Relative_AK8PFchs.txt') )
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_mcRun2_asymptotic_v4_L3Absolute_AK8PFchs.txt') )
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_MC_L1FastJet_AK8PFchs.txt') )
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_MC_L2Relative_AK8PFchs.txt') )
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_MC_L3Absolute_AK8PFchs.txt') )
         jecAK8 = ROOT.FactorizedJetCorrector( vParAK8 )
 
-        jecUncAK8 = ROOT.JetCorrectionUncertainty( '74X_mcRun2_asymptotic_v4_Uncertainty_AK8PFchs.txt' )
+        jecUncAK8 = ROOT.JetCorrectionUncertainty( 'Spring16_25nsV6_MC_Uncertainty_AK8PFchs.txt' )
     else :
         vPar = ROOT.vector(ROOT.JetCorrectorParameters)()
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L1FastJet_AK4PFchs.txt') )
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L2Relative_AK4PFchs.txt') )
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L3Absolute_AK4PFchs.txt') )
-        vPar.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L2L3Residual_AK4PFchs.txt') ) # Need residual correction for data
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L1FastJet_AK4PFchs.txt') )
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L2Relative_AK4PFchs.txt') )
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L3Absolute_AK4PFchs.txt') )
+        vPar.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L2L3Residual_AK4PFchs.txt') ) # Need residual correction for data
         jec = ROOT.FactorizedJetCorrector( vPar )
-        jecUnc = ROOT.JetCorrectionUncertainty( '74X_dataRun2_v5_Uncertainty_AK4PFchs.txt' )
+        jecUnc = ROOT.JetCorrectionUncertainty( 'Spring16_25nsV6_DATA_Uncertainty_AK4PFchs.txt' )
 
         vParAK8 = ROOT.vector(ROOT.JetCorrectorParameters)()
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L1FastJet_AK8PFchs.txt') )
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L2Relative_AK8PFchs.txt') )
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L3Absolute_AK8PFchs.txt') )
-        vParAK8.push_back( ROOT.JetCorrectorParameters('74X_dataRun2_v5_L2L3Residual_AK8PFchs.txt') ) # Need residual correction for data
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L1FastJet_AK8PFchs.txt') )
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L2Relative_AK8PFchs.txt') )
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L3Absolute_AK8PFchs.txt') )
+        vParAK8.push_back( ROOT.JetCorrectorParameters('Spring16_25nsV6_DATA_L2L3Residual_AK8PFchs.txt') ) # Need residual correction for data
         jecAK8 = ROOT.FactorizedJetCorrector( vParAK8 )
 
-        jecUncAK8 = ROOT.JetCorrectionUncertainty( '74X_dataRun2_v5_Uncertainty_AK8PFchs.txt' )
+        jecUncAK8 = ROOT.JetCorrectionUncertainty( 'Spring16_25nsV6_DATA_Uncertainty_AK8PFchs.txt' )
 
 
 ##   ___ ___ .__          __                                             
@@ -237,19 +237,25 @@ def getJER(jetEta, sysType) :
         return float(jerSF)
 
     # Values from https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
-    etamin = [0.0,0.5,1.1,1.7,2.3,2.8,3.2]
-    etamax = [0.5,1.1,1.7,2.3,2.8,3.2,5.0]
+    etamin = [0.0,0.5,0.8,1.1,1.3,1.7,1.9,2.1,2.3,2.5,2.8,3.0,3.2]
+    etamax = [0.5,0.8,1.1,1.3,1.7,1.9,2.1,2.3,2.5,2.8,3.0,3.2,5.0]
     
-    scale_nom = [1.079,1.099,1.121,1.208,1.254,1.395,1.056]
-    scale_dn  = [1.053,1.071,1.092,1.162,1.192,1.332,0.865]
-    scale_up  = [1.105,1.127,1.150,1.254,1.316,1.458,1.247]
+    
+    scale_nom = [1.122, 1.167, 1.168, 1.029, 1.115, 1.041, 1.167, 1.094, 1.168, 1.266, 1.595, 0.998, 1.226]
+    scale_unc = [0.026, 0.048, 0.046, 0.066, 0.03, 0.062, 0.086, 0.093, 0.120, 0.132, 0.175, 0.066, 0.145]
+    
+    #scale_nom = [1.079,1.099,1.121,1.208,1.254,1.395,1.056]
+    #scale_dn  = [1.053,1.071,1.092,1.162,1.192,1.332,0.865]
+    #scale_up  = [1.105,1.127,1.150,1.254,1.316,1.458,1.247]
 
     for iSF in range(0,len(scale_nom)) :
         if abs(jetEta) >= etamin[iSF] and abs(jetEta) < etamax[iSF] :
             if sysType < 0 :
-                jerSF = scale_dn[iSF]
+                jerSF = (scale_nom[iSF] - scale_unc[iSF])
+                #jerSF = scale_dn[iSF]
             elif sysType > 0 :
-                jerSF = scale_up[iSF]
+                jerSF = (scale_nom[iSF] + scale_unc[iSF])
+                #jerSF = scale_up[iSF]
             else :
                 jerSF = scale_nom[iSF]
             break
