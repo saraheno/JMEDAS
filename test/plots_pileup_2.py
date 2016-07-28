@@ -1,15 +1,22 @@
 from ROOT import *
-from collections import OrderedDict
 from Analysis.JMEDAS.tdrstyle_mod14 import *
+from collections import OrderedDict
+from optparse import OptionParser
 
-# Flag to turn PUPPI jets on or off
-doPUPPI = False
-
-# Flag to draw, or not, the Gaussian fits to the response curves
-drawFits = False
-
-# Flag to draw, or not, the lines at the mean of the Gaussian fit
-drawLines = True
+parser = OptionParser()
+parser.add_option('--doPUPPI', action='store_true', default=False, dest='doPUPPI',
+                  help='Plot the PFPuppi algorithm as well (if it exists in the ntuple')
+parser.add_option('--drawFits', action='store_true', default=False, dest='drawFits',
+                  help='Flag to draw, or not, the Gaussian fits to the response curves')
+parser.add_option('--drawLines', action='store_false', default=True, dest='drawLines',
+                  help='Flag to draw, or not, the lines at the mean of the Gaussian fit')
+parser.add_option('--ifilename', type='string', action='store', default='pileupNtuple.root',
+		  dest='ifilename', help='The name of the input ROOT file.')
+parser.add_option('--algsize', type='string', action='store', default='AK4', dest='algsize',
+		  help="The algorithm and size of the jet collections to get from the ntuple.")
+parser.add_option('--maxEvents', type='int', action='store', default=-1, dest='maxEvents',
+                  help="The maximum number of events in the tree to use (default=-1 is all events).")
+(options, args) = parser.parse_args()
 
 # Set the ROOT style
 gROOT.Macro("rootlogon.C")
@@ -38,16 +45,10 @@ for f, s in enumerate(settings) :
 c = tdrCanvasMultipad("c",frames,14,11,2,2)
 
 # Open the ROOT file with the ntuple
-f = TFile("pileupNtuple.root")
-
-# Access and store the necessary trees
-tAK4PF   	= f.Get("AK4PFL1L2L3/t")
-tAK4PFchs   = f.Get("AK4PFCHSL1L2L3/t")
-tAK4PFPuppi = f.Get("AK4PFPuppiL1L2L3/t")
+f = TFile(options.ifilename)
 
 # Histogram settings
-NHISTOGRAMS = 4
-alg_size = "AK4"
+alg_size = options.algsize
 jetTypes = OrderedDict([("PF" , kBlack),("PFchs" , kRed),("PFPuppi" , kGreen)])
 corrections = OrderedDict([("Uncorrected" , kDotted),("L1" , kDashed),("L1L2L3" , kSolid)])
 hsettingsTMP = {'response' : (1,80,0,2),
@@ -70,9 +71,12 @@ for hs in hsettings:
 	legends[legname].SetTextSize(0.035)
 
 	for jt in jetTypes:
-		if not doPUPPI and jt == "PFPuppi":
+		if not options.doPUPPI and jt == "PFPuppi":
 			continue
-		tree = eval("t"+alg_size+jt)
+		if not f.GetDirectory(alg_size+jt.upper()+"L1L2L3"):
+			continue
+
+		tree = f.Get(alg_size+jt.upper()+"L1L2L3/t")
 
 		for cor in corrections:	
 			# Create the histograms
@@ -80,10 +84,12 @@ for hs in hsettings:
 
 			print "\tDoing the histogram",hname,"..."
 
-			histograms[hname] = TH1D(hname,hname,hsettings[hs][1],hsettings[hs][2],hsettings[hs][3])
+			histograms[hname] = TH1D(hname,hname,hsettingsTMP[hs][1],hsettingsTMP[hs][2],hsettingsTMP[hs][3])
 
 			# Fill the histograms
-			for event in tree:
+			for ievent, event in enumerate(tree):
+				if options.maxEvents>-1 and ievent > options.maxEvents:
+					continue
 				for jet, pt_from_tree in enumerate(event.jtpt):
 					if cor == "Uncorrected":
 						pt_updated = (pt_from_tree/event.jtjec[jet][0].second)
@@ -127,24 +133,24 @@ for hs in hsettings:
 			# Add entries to the legend		
 			legends[legname].AddEntry(histograms[hname],str(alg_size+jt+cor).replace("Uncorrected",""),"l")
 
-			c.cd(hsettings[hs][0])
+			c.cd(hsettingsTMP[hs][0])
 			tdrDraw(histograms[hname],"HIST",kNone,jetTypes[jt],corrections[cor],-1,0,0)
 
 			if hs == "response":
 				# Draw the fits
-				if drawFits:
-					c.cd(hsettings[hs][0])
+				if options.drawFits:
+					c.cd(hsettingsTMP[hs][0])
 					fits[fname].Draw("same")
 
 				# Draw the lines
-				if drawLines:
-					c.cd(hsettings[hs][0])
+				if options.drawLines:
+					c.cd(hsettingsTMP[hs][0])
 					lines[lname].Draw("same")
 			elif hs == "pt":
 				gPad.SetLogx()
 
 	#Draw the legend
-	c.cd(hsettings[hs][0])
+	c.cd(hsettingsTMP[hs][0])
 	legends[legname].Draw("same")	
 c.Update()
 c.Draw()
