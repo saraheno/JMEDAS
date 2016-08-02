@@ -2,11 +2,11 @@ from ROOT import *
 
 gROOT.Macro("rootlogon.C")
 
-f1 = TFile("qcd_short.root")
-f2 = TFile("zprime4000_short.root")
+f1 = TFile("ttjets_short.root")
+f2 = TFile("rsgluon_ttbar_3TeV.root")
 
-h_msoftdropAK8_1   = f1.Get("h_msoftdropAK8")
-h_msoftdropAK8_2   = f2.Get("h_msoftdropAK8")
+h_msoftdropAK8_1   = f1.Get("h_mprunedAK8")
+h_msoftdropAK8_2   = f2.Get("h_mprunedAK8")
 
 h_msoftdropAK8_1    .SetLineColor(1)
 h_msoftdropAK8_2    .SetLineColor(2)
@@ -14,8 +14,8 @@ h_msoftdropAK8_2    .SetLineColor(2)
 leg = TLegend(0.5, 0.5, 0.8, 0.8)
 leg.SetFillColor(0)
 leg.SetBorderSize(0)
-leg.AddEntry( h_msoftdropAK8_1, "QCD", 'l')
-leg.AddEntry( h_msoftdropAK8_2, "Z'", 'l')
+leg.AddEntry( h_msoftdropAK8_1, "t#bar{t}", 'l')
+leg.AddEntry( h_msoftdropAK8_2, "RS KK Gluon", 'l')
 
 h_msoftdropAK8_1.Sumw2()
 h_msoftdropAK8_1.Scale( 1.0 / h_msoftdropAK8_1.Integral() )
