@@ -1,0 +1,9 @@
+universe = vanilla
+Executable = condor-executable.sh
+should_transfer_files = NO
+Requirements = TARGET.FileSystemDomain == "privnet"
+Output = /data/users/eno/simple/CMSSW_9_1_0_pre3/src/sce_$(cluster)_$(process).stdout
+Error = /data/users/eno/simple/CMSSW_9_1_0_pre3/src/sce_$(cluster)_$(process).stderr
+Log = /data/users/eno/simple/CMSSW_9_1_0_pre3/src/sce_$(cluster)_$(process).condor
+Arguments = noSipmmage $(process) /data/users/eno/simple/CMSSW_9_1_0_pre3/src/ /data/users/eno/simple/CMSSW_9_1_0_pre3/src/   Analysis/JMEDAS/test/run_JetMiniValidation.py 1234567  1000000 /data/users/eno/simple/CMSSW_9_1_0_pre3/src/noSipmmage.txt
+Queue 1
