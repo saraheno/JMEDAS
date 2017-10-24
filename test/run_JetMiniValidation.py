@@ -1,4 +1,7 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.ParameterSet.VarParsing as VarParsing
+options = VarParsing.VarParsing ('analysis')
+options.parseArguments()
 
 process = cms.Process("Demo")
 
@@ -9,9 +12,51 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(
-        'root://cmsxrootd.fnal.gov:///store/mc/RunIISpring16MiniAODv2/ZprimeToTT_M-3000_W-900_13TeV-madgraph/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/10000/00694A03-DB3A-E611-AEDF-002590552120.root',
-        'root://cmsxrootd.fnal.gov:///store/mc/RunIISpring16MiniAODv2/ZprimeToTT_M-3000_W-900_13TeV-madgraph/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/10000/82738509-B33A-E611-ACAA-0CC47AA98F98.root',
-        'root://cmsxrootd.fnal.gov:///store/mc/RunIISpring16MiniAODv2/ZprimeToTT_M-3000_W-900_13TeV-madgraph/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/10000/EAA4BB9E-DF3A-E611-B1B1-0CC47A6C1818.root'
+        options.inputFiles
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_3.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_5.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_6.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_7.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_8.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_9.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_10.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_11.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_12.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_13.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_14.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_15.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_16.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_17.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_18.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_18.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_20.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_21.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_22.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_23.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_24.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_25.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_26.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_27.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_28.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_29.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-scenario3-step3-HcalEcal_aged-SiPM_nonaged/170726_130015/0000/step3_30.root',
+#'file:/data/users/eno/simple/CMSSW_9_1_0_pre3/src/FED2618B-1331-E711-819D-0025905B85C0.root '
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_1.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_2.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_3.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_4.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_5.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_7.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_8.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_9.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_11.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_15.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_16.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_17.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_18.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_19.root',
+#'file:/mnt/hadoop/cms/store/user/snabili/RelValQCD_Pt-15To7000_Flat_14TeV/Data_analysis-step3-HcalEcalSiPM-aged/170725_131733/0000/step3_20.root',
+
     )
 )
 
@@ -28,7 +73,7 @@ process.ana = cms.EDAnalyzer('JetMiniValidation',
 
 ### OUT
 process.TFileService = cms.Service("TFileService",
-      fileName = cms.string("out_JetMiniValidation.root"),
+      fileName = cms.string("out.root"),
       closeFileFast = cms.untracked.bool(True)
   )
 
