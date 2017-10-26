@@ -424,7 +424,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   using namespace reco;
   using namespace pat;
 
-  bool verbose = true;
+  bool verbose = false;
 
 
 
