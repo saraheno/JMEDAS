@@ -312,7 +312,7 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
 
 
   h_ak4_pt             =  fs->make<TH1D>("h_ak4_pt"                ,"",100, 0,2000);
-  h_njet             =  fs->make<TH1D>("h_njet"                ,"",50, 0,50);
+  h_njet             =  fs->make<TH1D>("h_njet"                ,"",20, 0,20);
   h_ak4_genpt             =  fs->make<TH1D>("h_ak4_genpt"                ,"",100, 0,2000);
   h_ak4_eta            =  fs->make<TH1D>("h_ak4_eta"               ,"",100,-5,   5);
   h_ak4_phi            =  fs->make<TH1D>("h_ak4_phi"               ,"",100,-6,   6);
@@ -469,7 +469,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
 
 
-    if(pt>100) h_ak4_genpt->Fill(pt);
+    if(pt>50) h_ak4_genpt->Fill(pt);
     // find gen jets with no reco jet match
     if(pt>50) {
       float dRmin =100.;
@@ -569,11 +569,11 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
       h_dr_jet->Fill(dRjet);
     }
     if(verbose) {
-      if(pt>100)
+      if(pt>50)
         std::cout<<"   jet "<<iijet<<" matches jet "<<imatch<<" with dr of "<<dRjet<<std::endl;
     }
 
-    if((pt>100)&&(goodJet_looseJetID)) {
+    if((pt>50)&&(goodJet_looseJetID)) {
       if(verbose) { 
 	std::cout<<"    in with pt eta "<<pt<<" "<<eta<<std::endl;
 
