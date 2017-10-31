@@ -133,6 +133,7 @@ private:
 
 
   TH1D * h_ak4_genpt             ;  
+  TH1D * h_ak4_genpt_match             ;  
   TH1D * h_njet ;
   TH1D * h_ak4_pt             ;  
   TH1D * h_ak4_eta            ;  
@@ -311,9 +312,10 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
 
 
 
-  h_ak4_pt             =  fs->make<TH1D>("h_ak4_pt"                ,"",100, 0,2000);
-  h_njet             =  fs->make<TH1D>("h_njet"                ,"",20, 0,20);
-  h_ak4_genpt             =  fs->make<TH1D>("h_ak4_genpt"                ,"",100, 0,2000);
+  h_ak4_pt =  fs->make<TH1D>("h_ak4_pt"                ,"",100, 0,2000);
+  h_njet=  fs->make<TH1D>("h_njet"                ,"",20, 0,20);
+  h_ak4_genpt =  fs->make<TH1D>("h_ak4_genpt","",100, 0,2000);
+  h_ak4_genpt_match =  fs->make<TH1D>("h_ak4_genpt_match","",100, 0,2000);
   h_ak4_eta            =  fs->make<TH1D>("h_ak4_eta"               ,"",100,-5,   5);
   h_ak4_phi            =  fs->make<TH1D>("h_ak4_phi"               ,"",100,-6,   6);
   h_nhf                = fs->make<TH1D>("h_nhf","",100,0,1.2);
@@ -505,6 +507,9 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
         if(verbose) {
 	  std::cout<<" gen jet "<<iigen<<" has no matching reco jet"<<std::endl;
         }
+      }
+      else {
+	h_ak4_genpt_match->Fill(pt);
       }
 
     }  // end pt cut on gen jet
