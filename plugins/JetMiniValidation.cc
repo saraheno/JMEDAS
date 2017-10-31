@@ -146,7 +146,7 @@ private:
   TH1D * h_ak4_flavParton     ;
   TH1D * h_ak4_flavHadron     ;
   TH1D * h_ak4_dRminGen       ;
-  TH1D * h_ak4_ptGen          ;
+  TH1D * h_ak4_ptifmatchGen          ;
   TH1D * h_ak4_ptResponse     ;
   TH2D * h_res_v_pt          ;
   TH2D * h_pt1_pt2;
@@ -326,7 +326,7 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   h_ak4_flavParton     =  fs->make<TH1D>("h_ak4_flavParton"        ,"",60,-30,30);
   h_ak4_flavHadron     =  fs->make<TH1D>("h_ak4_flavHadron"        ,"",60,-30,30);
   h_ak4_dRminGen       =  fs->make<TH1D>("h_ak4_dRminGen"          ,"",100, 0,  0.6);
-  h_ak4_ptGen          =  fs->make<TH1D>("h_ak4_ptGen"             ,"",100, 0,2000);
+  h_ak4_ptifmatchGen          =  fs->make<TH1D>("h_ak4_ptifmatchGen"             ,"",100, 0,2000);
   h_ak4_ptResponse     =  fs->make<TH1D>("h_ak4_ptResponse"        ,"",100,-2,   2);
 
   h_res_v_pt             =  fs->make<TH2D>("h_res_v_pt" ,"",50, 0,1000,100,0,2);
@@ -627,8 +627,10 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
       }
       if(verbose) std::cout<<"    jet "<<iijet<<" matches gen jet "<<imatchgen<<std::endl;
       h_ak4_dRminGen         ->Fill( dRmin       );
-      h_ak4_ptGen            ->Fill( ptGen       );
-      if (ptGen>0) h_ak4_ptResponse       ->Fill( ptres );
+      if (ptGen>0) {
+	h_ak4_ptResponse       ->Fill( ptres );
+        h_ak4_ptifmatchGen            ->Fill( pt  );
+      }
 
       h_res_v_pt       ->Fill(ptGen,ptres);
 

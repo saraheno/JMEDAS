@@ -124,6 +124,14 @@ void makeplots() {
   atitle="gen jet pT ak4 pt>50 looseJet ID";
   AA=getHIST(f1,hplot1);
   MakePlot(AA,canv,atitle,aaN,color,outname);
+ 
+
+
+  hplot1 = "ana/h_ak4_ptResponse";  
+  outname = "plots/Response.png";
+  atitle="gen jet response ak4 pt>50 looseJet ID";
+  AA=getHIST(f1,hplot1);
+  MakePlot(AA,canv,atitle,aaN,color,outname);
   
 
   // plot jet reconstruction efficiency versus pt
@@ -134,9 +142,20 @@ void makeplots() {
   TH1F* BB=getHIST(f1,hplot1);
   BB->Sumw2();
   BB->Divide(BB,AA,1.,1.,"B");
-
   outname = "plots/eff.png";
-  atitle="jet reconstruction efficiency versus pT ak4";
+  atitle="rec jet prob to match gen jet versus pT ak4";
+  MakePlot(BB,canv,atitle,1.,color,outname);
+
+  //plot fake jets
+  hplot1 = "ana/h_ak4_pt";  
+  AA=getHIST(f1,hplot1);
+  AA->Sumw2();
+  hplot1 = "ana/h_ak4_ptifmatchGen";  
+  BB=getHIST(f1,hplot1);
+  BB->Sumw2();
+  BB->Divide(BB,AA,1.,1.,"B");
+  outname = "plots/fakes.png";
+  atitle="rec jet prob to match gen jet versus pT ak4";
   MakePlot(BB,canv,atitle,1.,color,outname);
 
 
