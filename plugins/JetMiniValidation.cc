@@ -490,6 +490,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
           (fabs(etar) < 2.4 && CHF > 0.0 && NHF < 0.99 && CM > 0 && CEMF < 0.99 && NEMF < 0.99) 
           || ( fabs(etar) >= 2.4 && fabs(etar) < 3.0 && NEMF < 0.9 && NM > 2 ) 
           || ( fabs(etar) >= 3.0 && NEMF < 0.9 && NM > 10 );
+	//goodJet_looseJetID = true;
 	
 	if((ptr>20)&&goodJet_looseJetID) {
           float dR = reco::deltaR(ijet.eta(),ijet.phi(),igen.eta(),igen.phi());

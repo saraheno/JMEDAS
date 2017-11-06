@@ -35,10 +35,47 @@ void SetupCanvas(TCanvas* canv) {
   float dy_l = 0.1;
   float x0_l = x1_l-dx_l;
   float y0_l = y1_l-dy_l;
-  
-
-  
+    
 }
+
+
+Double_t getMEAN(TFile* f1,char* hname) {
+ TH1F *A_pt = static_cast<TH1F*>(f1->Get(hname)->Clone());
+ A_pt->SetDirectory(0);
+ Double_t aa=A_pt->GetMean();
+ return aa;
+}
+
+Double_t getMEANerr(TFile* f1,char* hname) {
+ TH1F *A_pt = static_cast<TH1F*>(f1->Get(hname)->Clone());
+ A_pt->SetDirectory(0);
+ Double_t aa=A_pt->GetEntries();
+ Double_t bb=A_pt->GetRMS();
+ Double_t cc=0;
+ if(aa!=0) cc=bb/sqrt(aa);
+ return cc;
+}
+
+
+Double_t getRMS(TFile* f1,char* hname) {
+ TH1F *A_pt = static_cast<TH1F*>(f1->Get(hname)->Clone());
+ A_pt->SetDirectory(0);
+ Double_t aa=A_pt->GetRMS();
+ return aa;
+}
+
+Double_t getRMSerr(TFile* f1,char* hname) {
+ TH1F *A_pt = static_cast<TH1F*>(f1->Get(hname)->Clone());
+ A_pt->SetDirectory(0);
+ Double_t aa=A_pt->GetEntries();
+ Double_t bb=A_pt->GetRMS();
+ Double_t cc=0;
+ if(aa!=0) cc=sqrt(3.)*bb/sqrt(aa);
+ std::cout<<"aa bb cc "<<aa<<" "<<bb<<" "<<cc<<std::endl;
+ return cc;
+}
+
+
 
 TH1F* getHIST(TFile* f1,char* hname) {
  std::cout<<"getting "<<hname<<std::endl;
@@ -157,6 +194,44 @@ void makeplots() {
   outname = "plots/fakes.png";
   atitle="rec jet prob to match gen jet versus pT ak4";
   MakePlot(BB,canv,atitle,1.,color,outname);
+
+
+  //resolution curve
+  const Int_t n=4;
+  Double_t x[n],y[n],ex[n],ey[n],ne;
+  x[0]=getMEAN(f1,"ana/h_pt100150");
+  ex[0]=getMEANerr(f1,"ana/h_pt100150");
+  y[0]=getRMS(f1,"ana/h_res_pt100150");
+  ey[0]=getRMSerr(f1,"ana/h_res_pt100150");
+
+  x[1]=getMEAN(f1,"ana/h_pt150200");
+  ex[1]=getMEANerr(f1,"ana/h_pt150200");
+  y[1]=getRMS(f1,"ana/h_res_pt150200");
+  ey[1]=getRMSerr(f1,"ana/h_res_pt150200");
+
+  x[2]=getMEAN(f1,"ana/h_pt200250");
+  ex[2]=getMEANerr(f1,"ana/h_pt200250");
+  y[2]=getRMS(f1,"ana/h_res_pt200250");
+  ey[2]=getRMSerr(f1,"ana/h_res_pt200250");
+
+  x[3]=getMEAN(f1,"ana/h_pt250300");
+  ex[3]=getMEANerr(f1,"ana/h_pt250300");
+  y[3]=getRMS(f1,"ana/h_res_pt250300");
+  ey[3]=getRMSerr(f1,"ana/h_res_pt250300");
+
+
+  TGraphErrors* gr = new TGraphErrors(n,x,y,ex,ey);
+  gr->SetLineColor(2);
+  gr->SetLineWidth(4);
+  gr->SetTitle("resolution vs pT ak4 jets");
+  gr->GetXaxis()->SetTitle("pT GeV");
+  gr->GetYaxis()->SetTitle("resolution GeV");
+  gr->Draw("AP");
+ canv->Update();
+ canv->RedrawAxis();
+ canv->GetFrame()->Draw();
+ canv->Print("res",".png");
+  
 
 
 }
