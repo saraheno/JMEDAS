@@ -154,10 +154,14 @@ private:
   TH1D * h_pt4;
   TH1D * h_pt5;
 
+  TH1D * h_res_pt5075;
+  TH1D * h_res_pt75100;
   TH1D * h_res_pt100150;
   TH1D * h_res_pt150200;
   TH1D * h_res_pt200250;
   TH1D * h_res_pt250300;
+  TH1D * h_pt5075;
+  TH1D * h_pt75100;
   TH1D * h_pt100150;
   TH1D * h_pt150200;
   TH1D * h_pt200250;
@@ -335,12 +339,16 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   h_pt4   =  fs->make<TH1D>("h_pt4"        ,"",100,0,   1000);
   h_pt5   =  fs->make<TH1D>("h_pt5"        ,"",100,0,   1000);
 
+  h_res_pt5075 = fs->make<TH1D>("h_res_pt5075","",100,0,2);
+  h_res_pt75100 = fs->make<TH1D>("h_res_pt75100","",100,0,2);
   h_res_pt100150 = fs->make<TH1D>("h_res_pt100150","",100,0,2);
   h_res_pt150200 = fs->make<TH1D>("h_res_pt150200","",100,0,2);
   h_res_pt200250 = fs->make<TH1D>("h_res_pt200250","",100,0,2);
   h_res_pt250300 = fs->make<TH1D>("h_res_pt250300","",100,0,2);
 
 
+  h_pt5075 = fs->make<TH1D>("h_pt5075","",100,50,75);
+  h_pt75100 = fs->make<TH1D>("h_pt75100","",100,75,100);
   h_pt100150 = fs->make<TH1D>("h_pt100150","",100,100,150);
   h_pt150200 = fs->make<TH1D>("h_pt150200","",100,150,200);
   h_pt200250 = fs->make<TH1D>("h_pt200250","",100,200,250);
@@ -635,6 +643,8 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
       h_res_v_pt       ->Fill(ptGen,ptres);
 
+      if(ptGen>50&&ptGen<75) {h_res_pt5075->Fill(ptres); h_pt5075->Fill(ptGen);}
+      if(ptGen>75&&ptGen<100) {h_res_pt75100->Fill(ptres); h_pt75100->Fill(ptGen);}
       if(ptGen>100&&ptGen<150) {h_res_pt100150->Fill(ptres); h_pt100150->Fill(ptGen);}
       if(ptGen>105&&ptGen<200) {h_res_pt150200->Fill(ptres); h_pt150200->Fill(ptGen);}
       if(ptGen>200&&ptGen<250) {h_res_pt200250->Fill(ptres); h_pt200250->Fill(ptGen);}

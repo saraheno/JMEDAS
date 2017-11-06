@@ -197,27 +197,39 @@ void makeplots() {
 
 
   //resolution curve
-  const Int_t n=4;
+  const Int_t n=6;
   Double_t x[n],y[n],ex[n],ey[n],ne;
-  x[0]=getMEAN(f1,"ana/h_pt100150");
-  ex[0]=getMEANerr(f1,"ana/h_pt100150");
-  y[0]=getRMS(f1,"ana/h_res_pt100150");
-  ey[0]=getRMSerr(f1,"ana/h_res_pt100150");
 
-  x[1]=getMEAN(f1,"ana/h_pt150200");
-  ex[1]=getMEANerr(f1,"ana/h_pt150200");
-  y[1]=getRMS(f1,"ana/h_res_pt150200");
-  ey[1]=getRMSerr(f1,"ana/h_res_pt150200");
 
-  x[2]=getMEAN(f1,"ana/h_pt200250");
-  ex[2]=getMEANerr(f1,"ana/h_pt200250");
-  y[2]=getRMS(f1,"ana/h_res_pt200250");
-  ey[2]=getRMSerr(f1,"ana/h_res_pt200250");
+  x[0]=getMEAN(f1,"ana/h_pt5075");
+  ex[0]=getMEANerr(f1,"ana/h_pt5075");
+  y[0]=getRMS(f1,"ana/h_res_pt5075");
+  ey[0]=getRMSerr(f1,"ana/h_res_pt5075");
 
-  x[3]=getMEAN(f1,"ana/h_pt250300");
-  ex[3]=getMEANerr(f1,"ana/h_pt250300");
-  y[3]=getRMS(f1,"ana/h_res_pt250300");
-  ey[3]=getRMSerr(f1,"ana/h_res_pt250300");
+  x[1]=getMEAN(f1,"ana/h_pt75100");
+  ex[1]=getMEANerr(f1,"ana/h_pt75100");
+  y[1]=getRMS(f1,"ana/h_res_pt75100");
+  ey[1]=getRMSerr(f1,"ana/h_res_pt75100");
+
+  x[2]=getMEAN(f1,"ana/h_pt100150");
+  ex[2]=getMEANerr(f1,"ana/h_pt100150");
+  y[2]=getRMS(f1,"ana/h_res_pt100150");
+  ey[2]=getRMSerr(f1,"ana/h_res_pt100150");
+
+  x[3]=getMEAN(f1,"ana/h_pt150200");
+  ex[3]=getMEANerr(f1,"ana/h_pt150200");
+  y[3]=getRMS(f1,"ana/h_res_pt150200");
+  ey[3]=getRMSerr(f1,"ana/h_res_pt150200");
+
+  x[4]=getMEAN(f1,"ana/h_pt200250");
+  ex[4]=getMEANerr(f1,"ana/h_pt200250");
+  y[4]=getRMS(f1,"ana/h_res_pt200250");
+  ey[4]=getRMSerr(f1,"ana/h_res_pt200250");
+
+  x[5]=getMEAN(f1,"ana/h_pt250300");
+  ex[5]=getMEANerr(f1,"ana/h_pt250300");
+  y[5]=getRMS(f1,"ana/h_res_pt250300");
+  ey[5]=getRMSerr(f1,"ana/h_res_pt250300");
 
 
   TGraphErrors* gr = new TGraphErrors(n,x,y,ex,ey);
