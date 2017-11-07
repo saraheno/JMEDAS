@@ -197,42 +197,66 @@ void makeplots() {
 
 
   //resolution curve
-  const Int_t n=6;
+  const Int_t n=8;
   Double_t x[n],y[n],ex[n],ey[n],ne;
 
+  int ii=-1;
+ 
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt2550");
+  ex[ii]=getMEANerr(f1,"ana/h_pt2550");
+  y[ii]=getRMS(f1,"ana/h_res_pt2550");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt2550");
 
-  x[0]=getMEAN(f1,"ana/h_pt5075");
-  ex[0]=getMEANerr(f1,"ana/h_pt5075");
-  y[0]=getRMS(f1,"ana/h_res_pt5075");
-  ey[0]=getRMSerr(f1,"ana/h_res_pt5075");
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt5075");
+  ex[ii]=getMEANerr(f1,"ana/h_pt5075");
+  y[ii]=getRMS(f1,"ana/h_res_pt5075");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt5075");
 
-  x[1]=getMEAN(f1,"ana/h_pt75100");
-  ex[1]=getMEANerr(f1,"ana/h_pt75100");
-  y[1]=getRMS(f1,"ana/h_res_pt75100");
-  ey[1]=getRMSerr(f1,"ana/h_res_pt75100");
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt75100");
+  ex[ii]=getMEANerr(f1,"ana/h_pt75100");
+  y[ii]=getRMS(f1,"ana/h_res_pt75100");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt75100");
 
-  x[2]=getMEAN(f1,"ana/h_pt100150");
-  ex[2]=getMEANerr(f1,"ana/h_pt100150");
-  y[2]=getRMS(f1,"ana/h_res_pt100150");
-  ey[2]=getRMSerr(f1,"ana/h_res_pt100150");
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt100150");
+  ex[ii]=getMEANerr(f1,"ana/h_pt100150");
+  y[ii]=getRMS(f1,"ana/h_res_pt100150");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt100150");
 
-  x[3]=getMEAN(f1,"ana/h_pt150200");
-  ex[3]=getMEANerr(f1,"ana/h_pt150200");
-  y[3]=getRMS(f1,"ana/h_res_pt150200");
-  ey[3]=getRMSerr(f1,"ana/h_res_pt150200");
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt150200");
+  ex[ii]=getMEANerr(f1,"ana/h_pt150200");
+  y[ii]=getRMS(f1,"ana/h_res_pt150200");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt150200");
 
-  x[4]=getMEAN(f1,"ana/h_pt200250");
-  ex[4]=getMEANerr(f1,"ana/h_pt200250");
-  y[4]=getRMS(f1,"ana/h_res_pt200250");
-  ey[4]=getRMSerr(f1,"ana/h_res_pt200250");
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt200250");
+  ex[ii]=getMEANerr(f1,"ana/h_pt200250");
+  y[ii]=getRMS(f1,"ana/h_res_pt200250");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt200250");
 
-  x[5]=getMEAN(f1,"ana/h_pt250300");
-  ex[5]=getMEANerr(f1,"ana/h_pt250300");
-  y[5]=getRMS(f1,"ana/h_res_pt250300");
-  ey[5]=getRMSerr(f1,"ana/h_res_pt250300");
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt250300");
+  ex[ii]=getMEANerr(f1,"ana/h_pt250300");
+  y[ii]=getRMS(f1,"ana/h_res_pt250300");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt250300");
+
+
+  ii++;
+  x[ii]=getMEAN(f1,"ana/h_pt300400");
+  ex[ii]=getMEANerr(f1,"ana/h_pt300400");
+  y[ii]=getRMS(f1,"ana/h_res_pt300400");
+  ey[ii]=getRMSerr(f1,"ana/h_res_pt300400");
 
 
   TGraphErrors* gr = new TGraphErrors(n,x,y,ex,ey);
+  gr->GetXaxis()->SetLimits(0.,500.);
+  gr->SetMinimum(0.);
+  gr->SetMaximum(0.25);
+
   gr->SetLineColor(2);
   gr->SetLineWidth(4);
   gr->SetTitle("resolution vs pT ak4 jets");
