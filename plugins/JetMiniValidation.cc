@@ -46,6 +46,8 @@
 #include "DataFormats/JetReco/interface/CaloJetCollection.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
+#include "RecoLocalCalo/HGCalRecAlgos/interface/HGCalImagingAlgo.h"
+
 // TFile
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -122,6 +124,11 @@ private:
   // ----------member data ---------------------------
   edm::EDGetTokenT<reco::PFJetCollection> ak4jetToken_;
   edm::EDGetTokenT<reco::GenJetCollection> ak4genjetToken_;
+
+  edm::EDGetTokenT<HGCRecHitCollection> hits_ee_token;
+  edm::EDGetTokenT<HGCRecHitCollection> hits_fh_token;
+  edm::EDGetTokenT<HGCRecHitCollection> hits_bh_token;
+
 
 
 
@@ -244,7 +251,11 @@ private:
 
 JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   ak4jetToken_(consumes<reco::PFJetCollection>(edm::InputTag("ak4PFJets"))),
-  ak4genjetToken_(consumes<reco::GenJetCollection>(edm::InputTag("ak4GenJets")))
+  ak4genjetToken_(consumes<reco::GenJetCollection>(edm::InputTag("ak4GenJets"))),
+  hits_ee_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCEEInput"))),
+  hits_fh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCFHInput"))),
+  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCBHInput")))
+
 {
 
   usesResource("TFileService");
@@ -534,7 +545,21 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
   }  // end loop over gen jet
 
+  // rec hits
+  //****************************************************************
 
+  edm::Handle<HGCRecHitCollection> ee_hits;
+  edm::Handle<HGCRecHitCollection> fh_hits;
+  edm::Handle<HGCRecHitCollection> bh_hits;
+  iEvent.getByToken(hits_ee_token,ee_hits);
+
+  for (unsigned int i=0;i<(*ee_hits).size();++i) {
+
+    const HGCRecHit& hgrh = (*ee_hits)[i];
+    double anenergy = hgrh.energy();
+    std::cout<<"ee hit energy "<<anenergy<<std::endl;
+
+  }
 
 
   // reco jets
