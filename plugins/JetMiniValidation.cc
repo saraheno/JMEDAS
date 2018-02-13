@@ -466,6 +466,19 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
   edm::Handle<reco::GenJetCollection> AK4GENJET;  
   iEvent.getByToken(ak4genjetToken_, AK4GENJET);
+
+  edm::Handle<reco::GenParticleCollection> genParticlesH_;
+  iEvent.getByLabel("genParticles", genParticlesH_);  
+
+
+  // gen particles
+  int icntg=0;
+  for (reco::GenParticleCollection::const_iterator  igen = genParticlesH_->begin()\
+	 ; igen != genParticlesH_->end(); igen++) {
+    int iid = (*igen).pdgId();
+    icntg++;
+  }
+  std::cout<<" number of gen particles is "<<icntg<<std::endl;
   
   // gen jets
   //****************************************************
