@@ -252,9 +252,9 @@ private:
 JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   ak4jetToken_(consumes<reco::PFJetCollection>(edm::InputTag("ak4PFJets"))),
   ak4genjetToken_(consumes<reco::GenJetCollection>(edm::InputTag("ak4GenJets"))),
-  hits_ee_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCEEInput"))),
-  hits_fh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCFHInput"))),
-  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCBHInput")))
+  hits_ee_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCEERecHits"))),
+  hits_fh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCFHRecHits"))),
+  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCBHRecHits")))
 
 {
 
@@ -572,7 +572,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
     const HGCRecHit& hgrh = (*ee_hits)[i];
     double anenergy = hgrh.energy();
-    std::cout<<"ee hit energy "<<anenergy<<std::endl;
+    //    std::cout<<"ee hit energy "<<anenergy<<std::endl;
 
   }
 
