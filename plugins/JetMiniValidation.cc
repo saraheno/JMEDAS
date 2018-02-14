@@ -431,6 +431,8 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   ak4JetTree->Branch("ak4_dRminGen"         , & ak4_dRminGen       , "ak4_dRminGen/F"         );          
   ak4JetTree->Branch("ak4_area"             , & ak4_area           , "ak4_area/F"             );          
 
+  consumes<reco::GenParticleCollection> (edm::InputTag("genParticles"));
+  consumes<reco::GenJetCollection> (edm::InputTag("ak4GenJets"));
 
  
 }
