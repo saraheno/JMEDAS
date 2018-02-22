@@ -6,6 +6,7 @@ options.parseArguments()
 process = cms.Process("Demo")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
 

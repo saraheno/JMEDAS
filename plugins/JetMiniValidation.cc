@@ -1,4 +1,4 @@
-// -*- C++ -*-
+smove// -*- C++ -*-
 //
 // Package:    Analysis/JetMiniValidation
 // Class:      JetMiniValidation
@@ -47,6 +47,21 @@
 #include "DataFormats/Math/interface/deltaR.h"
 
 #include "RecoLocalCalo/HGCalRecAlgos/interface/HGCalImagingAlgo.h"
+#include "Geometry/HGCalGeometry/interface/HGCalGeometry.h"
+#include "Geometry/CaloTopology/interface/HGCalTopology.h"
+#include "DataFormats/ForwardDetId/interface/HGCEEDetId.h"
+#include "DataFormats/HGCRecHit/interface/HGCRecHitCollections.h"
+#include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
+#include "Geometry/CaloGeometry/interface/TruncatedPyramid.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+
+#include "DataFormats/Math/interface/Point3D.h"
+#include "DataFormats/EgammaReco/interface/BasicCluster.h"
+
+#include "RecoLocalCalo/HGCalRecAlgos/interface/RecHitTools.h"
+
 
 // TFile
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -129,7 +144,7 @@ private:
   edm::EDGetTokenT<HGCRecHitCollection> hits_fh_token;
   edm::EDGetTokenT<HGCRecHitCollection> hits_bh_token;
 
-
+  hgcal::RecHitTools rhtools_;
 
 
   std::unordered_map<std::string, TH1*> histoMap1D_;
@@ -568,11 +583,25 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   edm::Handle<HGCRecHitCollection> bh_hits;
   iEvent.getByToken(hits_ee_token,ee_hits);
 
+  std::cout<<"1"<<std::endl;
   for (unsigned int i=0;i<(*ee_hits).size();++i) {
-
+  std::cout<<"2"<<std::endl;
     const HGCRecHit& hgrh = (*ee_hits)[i];
+  std::cout<<"3"<<std::endl;
     double anenergy = hgrh.energy();
-    //    std::cout<<"ee hit energy "<<anenergy<<std::endl;
+  std::cout<<"4"<<std::endl;
+    DetId detid = hgrh.detid();
+  std::cout<<"5"<<std::endl;
+    unsigned int layer = rhtools_.getLayerWithOffset(detid);
+    std::cout<<" energy, detid, layer are "<<anenergy<<" "<<detid.subdetId()<<" "<<layer<<std::endl;
+  std::cout<<"6"<<std::endl;
+  //const GlobalPoint position( std::move( rhtools_.getPosition( detid ) ) );
+  //GlobalPoint position( rhtools_.getPosition( detid ) );
+  std::cout<<rhtools_.getPosition(detid)<<std::endl;
+  std::cout<<"7"<<std::endl;
+  //  std::cout<<" hit energy eta are "<<anenergy<<" "<<position.eta();
+			       
+
 
   }
 
