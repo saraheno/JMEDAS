@@ -670,17 +670,17 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
     // Geometry & looping over rechits
     //                           
     std::string nameDetector_ = m_geometrySource[index];
-    std::cout << nameDetector_ << std::endl;
+    //std::cout << nameDetector_ << std::endl;
 
     //
     // getByToken
     // 
     iEvent.getByToken(*token, PCaloHits);
     if( PCaloHits.isValid() && !PCaloHits->empty() ) {
-      std::cout << "Input found" << std::endl;
+      //std::cout << "Input found" << std::endl;
       edm::LogInfo("Input found") << m_PCaloHitsTags.at(index);
     } else {
-      std::cout << "Input not found" << std::endl;
+      //std::cout << "Input not found" << std::endl;
       edm::LogInfo("Input not found") << m_PCaloHitsTags.at(index);
       continue;
     }
@@ -692,20 +692,21 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
     for (const auto & it : *(PCaloHits.product())) {  
       
 
-      int    cell, sector, subsector, layer, zside;
+      int    cell, sector, layer, zside;
+      //int subsector;
       int    subdet(0);
       HepGeom::Point3D<float> gcoord;
       unsigned int id_ = it.id();
 
       // 
       if (nameDetector_ == "HCal") {
-	std::cout<<"HCAL"<<std::endl;
+	//std::cout<<"HCAL"<<std::endl;
 	//
 	int z, depth, eta, phi, lay;
 	HcalTestNumbering::unpackHcalIndex(it.id(), subdet, z, depth, eta, phi, lay);
-	std::cout<<subdet<<" "<<z<<" "<<depth<<" "<<eta<<" "<<phi<<" "<<lay<<std::endl;
+	//std::cout<<subdet<<" "<<z<<" "<<depth<<" "<<eta<<" "<<phi<<" "<<lay<<std::endl;
 	if (subdet != static_cast<int>(HcalEndcap)) continue;
-	std::cout<<"HCAL endcap"<<std::endl;
+	//std::cout<<"HCAL endcap"<<std::endl;
 	
 	HcalCellType::HcalCell hccell = hcCons_->cell(subdet, z, lay, eta, phi);
 	
@@ -716,18 +717,18 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	double rho = zp*tan(2.0*atan(exp(-hccell.eta)));
 	double xp  = rho * cos(hccell.phi); //cm
 	double yp  = rho * sin(hccell.phi); //cm
-	std::cout<<zp<<" "<<rho<<" "<<xp<<" "<<yp<<std::endl;
+	//std::cout<<zp<<" "<<rho<<" "<<xp<<" "<<yp<<std::endl;
 	
 	HcalDetId detId = HcalHitRelabeller::relabel(id_,hcConr_);
 	subdet           = detId.subdet();
 	if (subdet != static_cast<int>(HcalEndcap)) continue;
 	cell             = detId.ietaAbs();
 	sector           = detId.iphi();
-	subsector        = 1;
+	//subsector        = 1;
 	layer            = detId.depth();
 	zside            = detId.zside();
 
-	std::cout << it.energy() << " " << subdet << " "<<subsector<<std::endl;
+	//std::cout << it.energy() << " " << subdet << " "<<subsector<<std::endl;
 
 	if (it.energy()>0.5) std::cout << "HcalTupleMaker_HGCSimHits: " 
 				       << it.energy() << " " 
@@ -745,14 +746,14 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	// Use CaloCellGeometry getPosition
 	// 
 	const CaloCellGeometry* cellGeometry = hcGeometry_->getGeometry(detId);
-
+	/*
 	std::cout << "HCAL geom comparison: "
 		  << "(" << xp         << ", " << yp         << ", " << zp         << ") "  
 		  << rho << " "
 		  << "(" << gcoord.x() << ", " << gcoord.y() << ", " << gcoord.z() << ") "  
 		  << "(" << cellGeometry->getPosition().x() << ", " << cellGeometry->getPosition().y() << ", " << cellGeometry->getPosition().z() << ") "  
 		  << std::endl;
-
+	*/
 
 	//
 	// Use CaloCellGeometry getPosition() method at the end
@@ -767,7 +768,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
       
       else {
 	
-	if (it.energy()>0.5) std::cout << "HcalTupleMaker_HGCSimHits: " <<
+	if (it.energy()>0.5) std::cout << "Will Robinson  HcalTupleMaker_HGCSimHits: " <<
 			       nameDetector_<<" "
 				       << it.energy() << std::endl;
 	/*
