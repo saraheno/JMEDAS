@@ -699,17 +699,18 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
       // 
       if (nameDetector_ == "HCal") {
-
+	std::cout<<"HCAL"<<std::endl;
 	//
 	int z, depth, eta, phi, lay;
 	HcalTestNumbering::unpackHcalIndex(it.id(), subdet, z, depth, eta, phi, lay);
 	std::cout<<subdet<<" "<<z<<" "<<depth<<" "<<eta<<" "<<phi<<" "<<lay<<std::endl;
 	if (subdet != static_cast<int>(HcalEndcap)) continue;
+	std::cout<<"HCAL endcap"<<std::endl;
 	
 	HcalCellType::HcalCell hccell = hcCons_->cell(subdet, z, lay, eta, phi);
 	
 	double zp  = hccell.rz/10;  // mm -> cm, rz is actually Z?
-	/*
+	
 	int sign = (z==0)?(-1):(1);
 	zp      *= sign;
 	double rho = zp*tan(2.0*atan(exp(-hccell.eta)));
@@ -761,19 +762,20 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 					 cellGeometry->getPosition().z());
 
 
-	*/
+	
       } 
-      /*
+      
       else {
-
-	if (it.energy()>0.5) std::cout << "HcalTupleMaker_HGCSimHits: " 
-				       << it.energy() << " " 
-				       << nameDetector_ << " " 
-				       << subdet << " " << cell << " " << sector << std::endl;
+	
+	if (it.energy()>0.5) std::cout << "HcalTupleMaker_HGCSimHits: " <<
+			       nameDetector_<<" "
+				       << it.energy() << std::endl;
+	/*
 	  
 	std::cout << "HcalTupleMaker_HGCSimHits: " << hgcCons_[index]->geomMode() << std::endl;
-
+	
 	if (hgcCons_[index]->geomMode() == HGCalGeometryMode::Square) {
+	  
 
 	  std::cout << "HcalTupleMaker_HGCSimHits: in the square mode." << std::endl;
 	  HGCalTestNumbering::unpackSquareIndex(id_, zside, layer, sector, subsector, cell);
@@ -783,6 +785,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  int subs = (symmDet_ ? 0 : subsector);
 	  id_      = HGCalTestNumbering::packSquareIndex(zside,layer,sector,subs,0);
 	  gcoord   = (transMap_[id_]*lcoord); // 
+	  
 
 	} else {
 
@@ -795,8 +798,8 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  std::cout<<"will rob xp yp "<<xp<<" "<<yp<<std::endl;
 
 	} // end geometry test
+	*/
       }  // end not hcal
-     */
     }  // end loop over hits
   }  // end loop over detectors
 
