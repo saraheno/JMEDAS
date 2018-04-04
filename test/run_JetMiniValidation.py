@@ -8,7 +8,7 @@ process = cms.Process("Demo")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5) )
 
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
@@ -69,6 +69,18 @@ process.ana = cms.EDAnalyzer('JetMiniValidation',
                                     '../data/Spring16_25nsV5_MC/Spring16_25nsV5_MC_L2L3Residual_AK8PFchs.txt',
                                     '../data/Spring16_25nsV5_MC/Spring16_25nsV5_MC_Uncertainty_AK8PFchs.txt'
                                     ]),
+source = cms.untracked.VInputTag(
+        cms.untracked.InputTag("g4SimHits","HGCHitsEE"),
+        cms.untracked.InputTag("g4SimHits","HGCHitsHEfront"),
+        cms.untracked.InputTag("g4SimHits","HcalHits")
+        ),
+  geometrySource = cms.untracked.vstring(
+        'HGCalEESensitive',
+        'HGCalHESiliconSensitive',
+        'HCal'
+  ),
+  Prefix = cms.untracked.string  ("HGCSimHits"),
+  Suffix = cms.untracked.string  ("")
 )
 
 

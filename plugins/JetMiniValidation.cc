@@ -25,11 +25,16 @@
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/one/EDAnalyzer.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/ESTransientHandle.h"
+#include "FWCore/Utilities/interface/EDGetToken.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+
+#include "FWCore/Utilities/interface/transform.h"
 
 // DataFormats
 #include "DataFormats/Candidate/interface/Candidate.h"
@@ -51,16 +56,32 @@
 #include "Geometry/CaloTopology/interface/HGCalTopology.h"
 #include "DataFormats/ForwardDetId/interface/HGCEEDetId.h"
 #include "DataFormats/HGCRecHit/interface/HGCRecHitCollections.h"
-#include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
-#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
-#include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
-#include "Geometry/CaloGeometry/interface/TruncatedPyramid.h"
-#include "Geometry/Records/interface/CaloGeometryRecord.h"
+
 
 #include "DataFormats/Math/interface/Point3D.h"
 #include "DataFormats/EgammaReco/interface/BasicCluster.h"
 
 #include "RecoLocalCalo/HGCalRecAlgos/interface/RecHitTools.h"
+
+// PCaloHits objects
+#include "SimDataFormats/CaloHit/interface/PCaloHitContainer.h"
+#include "SimDataFormats/CaloHit/interface/PCaloHit.h"
+
+// HGCAL & HCAL Geometry
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloSubdetectorGeometry.h"
+#include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
+#include "Geometry/CaloGeometry/interface/TruncatedPyramid.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+
+#include "Geometry/HGCalGeometry/interface/HGCalGeometry.h"
+#include "SimDataFormats/CaloTest/interface/HGCalTestNumbering.h"
+#include "DataFormats/HcalDetId/interface/HcalTestNumbering.h"
+#include "DataFormats/HcalDetId/interface/HcalDetId.h"
+#include "Geometry/HGCalCommonData/interface/HGCalDDDConstants.h"
+#include "Geometry/HcalCommonData/interface/HcalDDDRecConstants.h"
+
+#include "Geometry/HcalCommonData/interface/HcalHitRelabeller.h"
 
 
 // TFile
@@ -123,7 +144,7 @@ const char *partNames[npart] = {
 
 
 
-class JetMiniValidation : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class JetMiniValidation : public edm::one::EDAnalyzer<edm::one::WatchRuns,edm::one::SharedResources>  {
 public:
   explicit JetMiniValidation(const edm::ParameterSet&);
   ~JetMiniValidation();
@@ -131,8 +152,12 @@ public:
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
 
+
+
 private:
   virtual void beginJob() override;
+  virtual void beginRun(const edm::Run& run,const edm::EventSetup& c) override;
+  virtual void endRun(edm::Run const&, edm::EventSetup const&) override {}
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
 
@@ -145,6 +170,24 @@ private:
   edm::EDGetTokenT<HGCRecHitCollection> hits_bh_token;
 
   hgcal::RecHitTools rhtools_;
+
+  std::vector<edm::InputTag> m_PCaloHitsTags;
+  std::vector<edm::EDGetTokenT<edm::PCaloHitContainer>> m_PCaloHitsTokens;
+
+  std::vector<std::string> m_geometrySource;
+
+  const std::string     m_prefix;
+  const std::string     m_suffix;
+
+  //HGC Geometry                                                                                                     
+  std::vector<const HGCalDDDConstants*> hgcCons_;
+  std::vector<const HGCalGeometry*>     hgcGeometry_;
+  const HcalDDDSimConstants*            hcCons_;
+  const HcalDDDRecConstants*            hcConr_;
+  const CaloSubdetectorGeometry*        hcGeometry_;
+
+  std::map<uint32_t, HepGeom::Transform3D> transMap_;
+
 
 
   std::unordered_map<std::string, TH1*> histoMap1D_;
@@ -269,8 +312,13 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   ak4genjetToken_(consumes<reco::GenJetCollection>(edm::InputTag("ak4GenJets"))),
   hits_ee_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCEERecHits"))),
   hits_fh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCFHRecHits"))),
-  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCBHRecHits")))
-
+  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCBHRecHits"))),
+  m_PCaloHitsTags (iConfig.getUntrackedParameter<std::vector<edm::InputTag> >("source")),
+  m_PCaloHitsTokens(edm::vector_transform(m_PCaloHitsTags, [this](edm::InputTag const & tag){
+	return consumes<edm::PCaloHitContainer>(tag);})),
+  m_geometrySource (iConfig.getUntrackedParameter<std::vector<std::string> >("geometrySource")),
+  m_prefix         (iConfig.getUntrackedParameter<std::string>  ("Prefix")),
+  m_suffix         (iConfig.getUntrackedParameter<std::string>  ("Suffix"))
 {
 
   usesResource("TFileService");
@@ -488,6 +536,8 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   iEvent.getByLabel("genParticles", genParticlesH_);  
 
 
+  edm::Handle<edm::PCaloHitContainer> PCaloHits;
+
   // gen particles
   int icntg=0;
   for (reco::GenParticleCollection::const_iterator  igen = genParticlesH_->begin()\
@@ -497,6 +547,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   }
   std::cout<<" number of gen particles is "<<icntg<<std::endl;
   
+  //****************************************************
   // gen jets
   //****************************************************
   int iigen=-1;
@@ -575,6 +626,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
   }  // end loop over gen jet
 
+  //****************************************************
   // rec hits
   //****************************************************************
 
@@ -600,14 +652,156 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   const GlobalPoint position( std::move( rhtools_.getPosition( detid ) ) );
   //GlobalPoint position( rhtools_.getPosition( detid ) );
   //std::cout<<rhtools_.getPosition(detid)<<std::endl;
-  std::cout<<"7"<<std::endl;
-  std::cout<<" hit energy eta are "<<anenergy<<" "<<position.eta();
+  //std::cout<<"7"<<std::endl;
+  //std::cout<<" hit energy eta are "<<anenergy<<" "<<position.eta();
 			       
-
-
   }
-  
 
+
+  //****************************************************
+  // sim hits
+  //****************************************************
+
+  for( typename std::vector<edm::EDGetTokenT<edm::PCaloHitContainer> >::const_iterator
+	 token = m_PCaloHitsTokens.begin(); token != m_PCaloHitsTokens.end(); ++token ) {
+    unsigned index(token - m_PCaloHitsTokens.begin());
+
+    //
+    // Geometry & looping over rechits
+    //                           
+    std::string nameDetector_ = m_geometrySource[index];
+    std::cout << nameDetector_ << std::endl;
+
+    //
+    // getByToken
+    // 
+    iEvent.getByToken(*token, PCaloHits);
+    if( PCaloHits.isValid() && !PCaloHits->empty() ) {
+      std::cout << "Input found" << std::endl;
+      edm::LogInfo("Input found") << m_PCaloHitsTags.at(index);
+    } else {
+      std::cout << "Input not found" << std::endl;
+      edm::LogInfo("Input not found") << m_PCaloHitsTags.at(index);
+      continue;
+    }
+    std::cout << nameDetector_ << " " << PCaloHits->size() << std::endl;
+
+    //
+    // Loop over PCaloHits
+    //
+    for (const auto & it : *(PCaloHits.product())) {  
+      
+
+      int    cell, sector, subsector, layer, zside;
+      int    subdet(0);
+      HepGeom::Point3D<float> gcoord;
+      unsigned int id_ = it.id();
+
+      // 
+      if (nameDetector_ == "HCal") {
+
+	//
+	int z, depth, eta, phi, lay;
+	HcalTestNumbering::unpackHcalIndex(it.id(), subdet, z, depth, eta, phi, lay);
+	std::cout<<subdet<<" "<<z<<" "<<depth<<" "<<eta<<" "<<phi<<" "<<lay<<std::endl;
+	if (subdet != static_cast<int>(HcalEndcap)) continue;
+	
+	HcalCellType::HcalCell hccell = hcCons_->cell(subdet, z, lay, eta, phi);
+	
+	double zp  = hccell.rz/10;  // mm -> cm, rz is actually Z?
+	/*
+	int sign = (z==0)?(-1):(1);
+	zp      *= sign;
+	double rho = zp*tan(2.0*atan(exp(-hccell.eta)));
+	double xp  = rho * cos(hccell.phi); //cm
+	double yp  = rho * sin(hccell.phi); //cm
+	std::cout<<zp<<" "<<rho<<" "<<xp<<" "<<yp<<std::endl;
+	
+	HcalDetId detId = HcalHitRelabeller::relabel(id_,hcConr_);
+	subdet           = detId.subdet();
+	if (subdet != static_cast<int>(HcalEndcap)) continue;
+	cell             = detId.ietaAbs();
+	sector           = detId.iphi();
+	subsector        = 1;
+	layer            = detId.depth();
+	zside            = detId.zside();
+
+	std::cout << it.energy() << " " << subdet << " "<<subsector<<std::endl;
+
+	if (it.energy()>0.5) std::cout << "HcalTupleMaker_HGCSimHits: " 
+				       << it.energy() << " " 
+				       << nameDetector_ << " " 
+				       << subdet << " " << cell << " " << sector << std::endl;
+
+	std::pair<double,double> etaphi = hcConr_->getEtaPhi(subdet,zside*cell,sector);
+	double rz = hcConr_->getRZ(subdet,zside*cell,layer);  // This is actually Z?
+	  
+	gcoord = HepGeom::Point3D<float>(rz*cos(etaphi.second)/cosh(etaphi.first)/tanh(etaphi.first),
+					 rz*sin(etaphi.second)/cosh(etaphi.first)/tanh(etaphi.first),
+					 rz);
+
+	//
+	// Use CaloCellGeometry getPosition
+	// 
+	const CaloCellGeometry* cellGeometry = hcGeometry_->getGeometry(detId);
+
+	std::cout << "HCAL geom comparison: "
+		  << "(" << xp         << ", " << yp         << ", " << zp         << ") "  
+		  << rho << " "
+		  << "(" << gcoord.x() << ", " << gcoord.y() << ", " << gcoord.z() << ") "  
+		  << "(" << cellGeometry->getPosition().x() << ", " << cellGeometry->getPosition().y() << ", " << cellGeometry->getPosition().z() << ") "  
+		  << std::endl;
+
+
+	//
+	// Use CaloCellGeometry getPosition() method at the end
+	// 
+	gcoord = HepGeom::Point3D<float>(cellGeometry->getPosition().x(),
+					 cellGeometry->getPosition().y(),
+					 cellGeometry->getPosition().z());
+
+
+	*/
+      } 
+      /*
+      else {
+
+	if (it.energy()>0.5) std::cout << "HcalTupleMaker_HGCSimHits: " 
+				       << it.energy() << " " 
+				       << nameDetector_ << " " 
+				       << subdet << " " << cell << " " << sector << std::endl;
+	  
+	std::cout << "HcalTupleMaker_HGCSimHits: " << hgcCons_[index]->geomMode() << std::endl;
+
+	if (hgcCons_[index]->geomMode() == HGCalGeometryMode::Square) {
+
+	  std::cout << "HcalTupleMaker_HGCSimHits: in the square mode." << std::endl;
+	  HGCalTestNumbering::unpackSquareIndex(id_, zside, layer, sector, subsector, cell);
+	  std::pair<float,float> xy = hgcCons_[index]->locateCell(cell,layer,subsector,false);
+	  const HepGeom::Point3D<float> lcoord(xy.first,xy.second,0);
+	  bool symmDet_=true;
+	  int subs = (symmDet_ ? 0 : subsector);
+	  id_      = HGCalTestNumbering::packSquareIndex(zside,layer,sector,subs,0);
+	  gcoord   = (transMap_[id_]*lcoord); // 
+
+	} else {
+
+	  double zp, xp, yp;
+	  std::pair<float,float> xy = hgcCons_[index]->locateCell(cell,layer,sector,false); //mm
+          zp = hgcCons_[index]->waferZ(layer,false); //cm 
+          //if (zside < 0) zp = -zp;
+          xp = (zp<0) ? -xy.first/10 : xy.first/10; //mm
+          yp = xy.second/10; //mm  
+	  std::cout<<"will rob xp yp "<<xp<<" "<<yp<<std::endl;
+
+	} // end geometry test
+      }  // end not hcal
+     */
+    }  // end loop over hits
+  }  // end loop over detectors
+
+
+  //****************************************************
   // reco jets
   // ********************************************
   int igood=0.;
@@ -823,6 +1017,67 @@ JetMiniValidation::beginJob()
 void 
 JetMiniValidation::endJob() 
 {
+}
+
+void
+JetMiniValidation::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
+{
+
+
+  //initiating HGC Geometry
+  for (size_t i=0; i<m_geometrySource.size(); i++) {
+      
+    // HCAL for BH/HEB
+    if (m_geometrySource[i].find("HCal") != std::string::npos) {
+      edm::ESHandle<HcalDDDSimConstants> pHSNDC;
+      iSetup.get<HcalSimNumberingRecord>().get(pHSNDC);
+      if (pHSNDC.isValid()) {
+	hcCons_ = pHSNDC.product();
+	hgcCons_.push_back(0);
+      } else {
+	edm::LogWarning("HGCalValid") << "Cannot initiate HcalDDDSimConstants: "
+				      << m_geometrySource[i] << std::endl;
+      }
+      edm::ESHandle<HcalDDDRecConstants> pHRNDC;
+      iSetup.get<HcalRecNumberingRecord>().get(pHRNDC);
+      if (pHRNDC.isValid()) {
+	hcConr_ = pHRNDC.product();
+      } else {
+	edm::LogWarning("HGCalValid") << "Cannot initiate HcalDDDRecConstants: "
+				      << m_geometrySource[i] << std::endl;
+      }
+      edm::ESHandle<CaloGeometry> caloG;
+      iSetup.get<CaloGeometryRecord>().get(caloG);
+      if (caloG.isValid()) {
+	const CaloGeometry* geo = caloG.product();
+	hcGeometry_ = geo->getSubdetectorGeometry(DetId::Hcal,HcalBarrel);
+	hgcGeometry_.push_back(0);
+      } else {
+	edm::LogWarning("HGCalValid") << "Cannot initiate HcalGeometry for "
+				      << m_geometrySource[i] << std::endl;
+      }
+    }
+    // HGC for EE & HEF
+    else {
+      edm::ESHandle<HGCalDDDConstants> hgcCons;
+      iSetup.get<IdealGeometryRecord>().get(m_geometrySource[i],hgcCons);
+      if (hgcCons.isValid()) {
+	hgcCons_.push_back(hgcCons.product());
+      } else {
+	edm::LogWarning("HGCalValid") << "Cannot initiate HGCalDDDConstants for "
+				      << m_geometrySource[i] << std::endl;
+      }
+      edm::ESHandle<HGCalGeometry> hgcGeom;
+      iSetup.get<IdealGeometryRecord>().get(m_geometrySource[i],hgcGeom);
+      if(hgcGeom.isValid()) {
+	hgcGeometry_.push_back(hgcGeom.product());
+      } else {
+	edm::LogWarning("HGCalValid") << "Cannot initiate HGCalGeometry for "
+				      << m_geometrySource[i] << std::endl;
+      }
+    }
+  }
+
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
