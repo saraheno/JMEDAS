@@ -311,8 +311,8 @@ JetMiniValidation::JetMiniValidation(const edm::ParameterSet& iConfig):
   ak4jetToken_(consumes<reco::PFJetCollection>(edm::InputTag("ak4PFJets"))),
   ak4genjetToken_(consumes<reco::GenJetCollection>(edm::InputTag("ak4GenJets"))),
   hits_ee_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCEERecHits"))),
-  hits_fh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCFHRecHits"))),
-  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCBHRecHits"))),
+  hits_fh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCHEFRecHits"))),
+  hits_bh_token(consumes<HGCRecHitCollection>(edm::InputTag("HGCalRecHit:HGCHEBRecHits"))),
   m_PCaloHitsTags (iConfig.getUntrackedParameter<std::vector<edm::InputTag> >("source")),
   m_PCaloHitsTokens(edm::vector_transform(m_PCaloHitsTags, [this](edm::InputTag const & tag){
 	return consumes<edm::PCaloHitContainer>(tag);})),
@@ -519,7 +519,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   using namespace reco;
   using namespace pat;
 
-  bool verbose = false;
+  bool verbose = true;
 
   rhtools_.getEventSetup(iSetup);
 
@@ -539,19 +539,21 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   edm::Handle<edm::PCaloHitContainer> PCaloHits;
 
   // gen particles
+  if(verbose) std::cout<<" starting gen particles"<<std::endl;
   int icntg=0;
   for (reco::GenParticleCollection::const_iterator  igen = genParticlesH_->begin()\
 	 ; igen != genParticlesH_->end(); igen++) {
     int iid = (*igen).pdgId();
+    if(verbose) std::cout<<"  gen part pt["<<icntg<<"]="<<(*igen).pt()<<std::endl;
     icntg++;
   }
-  std::cout<<" number of gen particles is "<<icntg<<std::endl;
+  if(verbose)  std::cout<<" number of gen particles is "<<icntg<<std::endl;
   
   //****************************************************
   // gen jets
   //****************************************************
   int iigen=-1;
-  if(verbose) std::cout<<"gen jets"<<std::endl;
+  if(verbose) std::cout<<" starting gen jets"<<std::endl;
   for (const reco::GenJet &igen : *AK4GENJET) {  
     iigen++;
     double pt = igen.pt();
@@ -634,34 +636,42 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   edm::Handle<HGCRecHitCollection> fh_hits;
   edm::Handle<HGCRecHitCollection> bh_hits;
   iEvent.getByToken(hits_ee_token,ee_hits);
+  iEvent.getByToken(hits_fh_token,fh_hits);
+  iEvent.getByToken(hits_bh_token,bh_hits);
 
 
-  
-  //std::cout<<"1"<<std::endl;
+  if(verbose)  std::cout<<" starting rec hits"<<std::endl;  
   for (unsigned int i=0;i<(*ee_hits).size();++i) {
-    //std::cout<<"2"<<std::endl;
     const HGCRecHit& hgrh = (*ee_hits)[i];
-    //std::cout<<"3"<<std::endl;
     double anenergy = hgrh.energy();
-    //std::cout<<"4"<<std::endl;
     DetId detid = hgrh.detid();
-    //std::cout<<"5"<<std::endl;
     unsigned int layer = rhtools_.getLayerWithOffset(detid);
-    //std::cout<<" energy, detid, layer are "<<anenergy<<" "<<detid.subdetId()<<" "<<layer<<std::endl;
-    //std::cout<<"6"<<std::endl;
   const GlobalPoint position( std::move( rhtools_.getPosition( detid ) ) );
-  //GlobalPoint position( rhtools_.getPosition( detid ) );
-  //std::cout<<rhtools_.getPosition(detid)<<std::endl;
-  //std::cout<<"7"<<std::endl;
-  //std::cout<<" hit energy eta are "<<anenergy<<" "<<position.eta();
-			       
   }
-
+  
+  for (unsigned int i=0;i<(*fh_hits).size();++i) {
+    const HGCRecHit& hgrh = (*fh_hits)[i];
+    double anenergy = hgrh.energy();
+    DetId detid = hgrh.detid();
+    unsigned int layer = rhtools_.getLayerWithOffset(detid);
+    const GlobalPoint position( std::move( rhtools_.getPosition( detid ) ) );
+  }
+  
+  for (unsigned int i=0;i<(*bh_hits).size();++i) {
+    const HGCRecHit& hgrh = (*bh_hits)[i];
+    double anenergy = hgrh.energy();
+    DetId detid = hgrh.detid();
+    unsigned int layer = rhtools_.getLayerWithOffset(detid);
+  const GlobalPoint position( std::move( rhtools_.getPosition( detid ) ) );
+  }
+  
 
   //****************************************************
   // sim hits
   //****************************************************
 
+
+  if(verbose) std::cout<<" starting sim hits"<<std::endl;
   for( typename std::vector<edm::EDGetTokenT<edm::PCaloHitContainer> >::const_iterator
 	 token = m_PCaloHitsTokens.begin(); token != m_PCaloHitsTokens.end(); ++token ) {
     unsigned index(token - m_PCaloHitsTokens.begin());
@@ -815,7 +825,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   float pt4=0.;
   float pt5=0.;
   int iijet=-1;
-  if(verbose) std::cout<<"reco jets "<<std::endl;
+  if(verbose) std::cout<<" starting reco jets "<<std::endl;
   for (const reco::PFJet &ijet : *AK4PFJET) {  
     iijet++;
     double pt = ijet.pt();
@@ -824,6 +834,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
     double ndau = ijet.numberOfDaughters();
     int iConst = ijet.nConstituents();
 
+    if(verbose) std::cout<<"   reco jet["<<iijet<<"] pt="<<pt<<std::endl;
     // jet ID
     double NHF       = ijet.neutralHadronEnergyFraction();
     double NEMF      = ijet.neutralEmEnergyFraction();
