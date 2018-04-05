@@ -703,7 +703,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
       
 
       int    cell, sector, layer, zside;
-      //int subsector;
+      int subsector;
       int    subdet(0);
       HepGeom::Point3D<float> gcoord;
       unsigned int id_ = it.id();
@@ -781,7 +781,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	if (it.energy()>0.5) std::cout << "Will Robinson  HcalTupleMaker_HGCSimHits: " <<
 			       nameDetector_<<" "
 				       << it.energy() << std::endl;
-	/*
+	
 	  
 	std::cout << "HcalTupleMaker_HGCSimHits: " << hgcCons_[index]->geomMode() << std::endl;
 	
@@ -809,7 +809,7 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  std::cout<<"will rob xp yp "<<xp<<" "<<yp<<std::endl;
 
 	} // end geometry test
-	*/
+	
       }  // end not hcal
     }  // end loop over hits
   }  // end loop over detectors
