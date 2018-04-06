@@ -784,10 +784,10 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	  
 	std::cout << "HcalTupleMaker_HGCSimHits: " << hgcCons_[index]->geomMode() << std::endl;
-	
+	/*
 	if (hgcCons_[index]->geomMode() == HGCalGeometryMode::Square) {
 	  
-
+	  
 	  std::cout << "HcalTupleMaker_HGCSimHits: in the square mode." << std::endl;
 	  HGCalTestNumbering::unpackSquareIndex(id_, zside, layer, sector, subsector, cell);
 	  std::pair<float,float> xy = hgcCons_[index]->locateCell(cell,layer,subsector,false);
@@ -809,8 +809,9 @@ JetMiniValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 	  std::cout<<"will rob xp yp "<<xp<<" "<<yp<<std::endl;
 
 	} // end geometry test
-	
+	*/
       }  // end not hcal
+	
     }  // end loop over hits
   }  // end loop over detectors
 
